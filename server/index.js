@@ -20,7 +20,7 @@ app.set("views", path.join(__dirname, "views"));
 // Enable CORS for requests from 'https://home-bliss.vercel.app'
 app.use(
   cors({
-    origin: "https://car-manage-5ohh.vercel.app/",
+    origin: "*",
     credentials: true,
   })
 );
