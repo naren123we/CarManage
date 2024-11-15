@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
 export const api = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "https://car-manage-kappa.vercel.app/api",
 });
 
 export const getAllCars = async () => {
@@ -21,34 +21,34 @@ export const getAllCars = async () => {
     throw error;
   }
 };
-export const updateCar=async (id,data,token)=>{
-  try{
-    const response = await api.put(`/car/update/${id}`,{
-      data,
-    },
-    {
+export const updateCar = async (id, data, token) => {
+  try {
+    const response = await api.put(
+      `/car/update/${id}`,
+      {
+        data,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+export const deleteCar = async (id, token) => {
+  try {
+    const response = await api.delete(`/car/delete/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
-  }
-  catch (error) {
+    });
+  } catch (error) {
     throw error;
   }
-}
-export const deleteCar=async (id,token)=>{
-  try{
-    const response = await api.delete(`/car/delete/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-  }
-  catch (error) {
-    throw error;
-  }
-}
+};
 export const getCar = async (id) => {
   try {
     const response = await api.get(`/car/cars/${id}`, {
