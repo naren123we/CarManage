@@ -78,3 +78,17 @@
     align-items: center;
     column-gap: 10px;
 }
+
+.allimages{
+    display: flex;
+    justify-content:space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.allimages>img{
+    align-self: center;
+    max-height: 5rem;
+    border-radius: 1rem;
+    cursor: pointer;
+}

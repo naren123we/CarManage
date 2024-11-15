@@ -12,40 +12,38 @@ import UserDetailContext from "../../context/UserDetailContext.js";
 import { toast } from "react-toastify";
 import Heart from "../../components/Heart/Heart";
 import { validateLogin } from "../../utils/common.js";
-import AddPropertyModal from "../../components/AddPropertyModal/AddPropertyModal.jsx";
 import UpdatePropertyModal from "../../components/UpdatePropertyModal/UpdatePropertyModal.jsx";
+import { useEffect } from "react";
 const Property = () => {
   const { pathname } = useLocation();
   const id = pathname.split("/").slice(-1)[0];
-  const navigate=useNavigate();
-  const { data, isLoading, isError } = useQuery(["res", id], () =>
-    getCar(id)
-  );
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useQuery(["res", id], () => getCar(id));
   const { userDetails, setUserDetails } = useContext(UserDetailContext);
-const checklogin=()=>{
-  if(validateLogin() && data?.userEmail===userDetails?.email)
-  return true;
-else
-return false;
-}
+  const checklogin = () => {
+    if (validateLogin() && data?.userEmail === userDetails?.email) return true;
+    else return false;
+  };
   const handleDelete = () => {
-      mutate();
-    }
-    const [modalOpened,setModalOpened]=useState(false);
- 
+    mutate();
+  };
+  const [modalOpened, setModalOpened] = useState(false);
+  const [mainimg, setMainImg] = useState("");
+
   const { mutate, isLoadingdel } = useMutation({
-    mutationFn: () =>
-      deleteCar(
-        id,
-        userDetails?.token
-      ),
+    mutationFn: () => deleteCar(id, userDetails?.token),
     onError: ({ response }) =>
       toast.error(response.data.message, { position: "bottom-right" }),
     onSuccess: () => {
       toast.success("Deleted Successfully", { position: "bottom-right" });
-      navigate("/")
+      navigate("/");
     },
   });
+
+  useEffect(() => {
+    setMainImg(data?.image[0]);
+  }, [data]);
+
   if (isLoading) {
     return (
       <div className="wrapper">
@@ -75,7 +73,21 @@ return false;
         </div>
 
         {/* image */}
-        <img src={data?.image} alt="home image" />
+        <img src={mainimg} alt="home image" />
+
+        <div className="allimages">
+          {data?.image.map((imgurl, index) => {
+            return (
+              <img
+                onMouseEnter={() => {
+                  setMainImg(imgurl);
+                }}
+                src={imgurl}
+                alt="home image"
+              />
+            );
+          })}
+        </div>
 
         <div className="flexCenter property-details">
           {/* left */}
@@ -119,40 +131,42 @@ return false;
 
             <div className="flexStart" style={{ gap: "1rem" }}>
               <MdLocationPin size={25} />
-              <span className="secondaryText">
-                {data?.tags}
-              </span>
+              <span className="secondaryText">{data?.tags}</span>
             </div>
           </div>
           <button
-                className="button"
-                onClick={() => {
-                  {
-                    checklogin()
-                      ? setModalOpened(true)
-                      : toast.error("Please Login with Owner's to Continue", {
-                          position: "bottom-right",
-                        });
-                  }
-                }}
-              >
-                Edit Details
-              </button>
-              <UpdatePropertyModal opened={modalOpened} setOpened={setModalOpened} data={data}/>
-              <button
-                className="button"
-                onClick={() => {
-                  {
-                    checklogin()
-                      ? handleDelete()
-                      : toast.error("Please Login with Owner's to Continue", {
-                          position: "bottom-right",
-                        });
-                  }
-                }}
-              >
-              Delete Car
-              </button>
+            className="button"
+            onClick={() => {
+              {
+                checklogin()
+                  ? setModalOpened(true)
+                  : toast.error("Please Login with Owner's to Continue", {
+                      position: "bottom-right",
+                    });
+              }
+            }}
+          >
+            Edit Details
+          </button>
+          <UpdatePropertyModal
+            opened={modalOpened}
+            setOpened={setModalOpened}
+            data={data}
+          />
+          <button
+            className="button"
+            onClick={() => {
+              {
+                checklogin()
+                  ? handleDelete()
+                  : toast.error("Please Login with Owner's to Continue", {
+                      position: "bottom-right",
+                    });
+              }
+            }}
+          >
+            Delete Car
+          </button>
         </div>
       </div>
     </div>

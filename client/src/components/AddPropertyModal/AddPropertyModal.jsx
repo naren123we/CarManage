@@ -7,14 +7,14 @@ import UserDetailContext from "../../context/UserDetailContext";
 
 const AddPropertyModal = ({ opened, setOpened }) => {
   const [active, setActive] = useState(0);
-  const { userDetails, } = useContext(UserDetailContext);
+  const { userDetails } = useContext(UserDetailContext);
 
   const [propertyDetails, setPropertyDetails] = useState({
     title: "",
     description: "",
     price: 0,
-    tags:"",
-    image: null,
+    tags: "",
+    image: [],
     facilities: {
       seats: 0,
       mileage: 0,

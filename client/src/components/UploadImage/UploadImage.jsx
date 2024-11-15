@@ -8,44 +8,47 @@ const UploadImage = ({
   nextStep,
   prevStep,
 }) => {
-  const [imageURL, setImageURL] = useState(propertyDetails.image);
+  const [imageURLs, setImageURLs] = useState(propertyDetails.image || []);
   const cloudinaryRef = useRef();
   const widgetRef = useRef();
   const handleNext = () => {
-    setPropertyDetails((prev) => ({ ...prev, image: imageURL }));
+    setPropertyDetails((prev) => ({ ...prev, image: imageURLs }));
     nextStep();
   };
+
   useEffect(() => {
     cloudinaryRef.current = window.cloudinary;
     widgetRef.current = cloudinaryRef.current.createUploadWidget(
       {
         cloudName: "djew8twjp",
         uploadPreset: "vx0dyjgc",
-        maxFiles: 1,
+        maxFiles: 10,
       },
       (err, result) => {
         if (result.event === "success") {
-          setImageURL(result.info.secure_url);
+          setImageURLs((prevURLs) => [...prevURLs, result.info.secure_url]);
         }
       }
     );
   }, []);
   return (
     <div className="flexColCenter uploadWrapper">
-      {!imageURL ? (
+      {imageURLs.length === 0 ? (
         <div
           className="flexColCenter uploadZone"
           onClick={() => widgetRef.current?.open()}
         >
           <AiOutlineCloudUpload size={50} color="grey" />
-          <span>Upload Image</span>
+          <span>Upload Images</span>
         </div>
       ) : (
         <div
-          className="uploadedImage"
+          className="uploadedImages"
           onClick={() => widgetRef.current?.open()}
         >
-          <img src={imageURL} alt="" />
+          {imageURLs.map((url, index) => (
+            <img key={index} src={url} alt={`Uploaded ${index + 1}`} />
+          ))}
         </div>
       )}
 
@@ -53,7 +56,7 @@ const UploadImage = ({
         <Button variant="default" onClick={prevStep}>
           Back
         </Button>
-        <Button onClick={handleNext} disabled={!imageURL}>
+        <Button onClick={handleNext} disabled={imageURLs.length === 0}>
           Next
         </Button>
       </Group>
